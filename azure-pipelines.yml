@@ -14,7 +14,7 @@ resources:
         - pipeline: 'buildpipeline'
           project: 'test'
           source: 'build pipeline'
-          branch: 'main'
+          branch: 'master'
 
 stages:
     - stage: DeployWebsite
