@@ -13,7 +13,7 @@ resources:
     pipelines:
         - pipeline: 'buildpipeline'
           project: 'test'
-          source: 'Build pipeline'
+          source: 'build pipeline'
           branch: 'main'
 
 stages:
