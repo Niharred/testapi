@@ -3,4 +3,62 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+trigger:
+- none
 
+variables:
+    IISWebsiteName: 'tester'
+
+resources:
+    pipelines:
+        - pipeline: 'buildpipeline'
+          project: 'test'
+          source: 'Build pipeline'
+          branch: 'main'
+
+stages:
+    - stage: DeployWebsite
+      displayName: 'Deploy website'
+      pool:
+        name: Default
+        demands:
+        - agent.name -equals agentselfhosted
+     
+      jobs:
+      - deployment: DeployWebsite
+        displayName: 'Deploy website'
+        environment: 'Windows 11 server.SURUKK'
+        strategy:
+         runOnce:
+             deploy:
+                 steps:
+                     - checkout: none
+                     - download: 'buildpipeline'
+                       name: 'DownloadBuildArtifacts'
+                       displayName: 'Download Build Artifacts'
+                       artifact: 'testapi'
+                       
+
+                     - task: IISWebAppManagementOnMachineGroup@0
+                       name: 'StopIIS'
+                       displayName: 'Stop IIS'
+
+                       inputs:
+                         IISDeploymentType: 'IISWebsite'
+                         ActionIISWebsite: 'StopWebsite'
+                         StartStopWebsiteName: '${{ variables.IISWebsiteName }}'
+                     - task: IISWebAppDeploymentOnMachineGroup@0
+                       name: 'DeployIIS'
+                       displayName: 'Deploy IIS Website'
+                       inputs:
+                        WebSiteName: '${{variables.IISWebsiteName}}'
+                        Package: '$(Pipeline.Workspace)\buildPipeline\test\Niharred.testapi'
+                        TakeAppOfflineFlag: true
+                    
+                     - task: IISWebAppManagementOnMachineGroup@0
+                       name: 'StartIIS'
+                       displayName: 'Start IIS Website'
+                       inputs:
+                        IISDeploymentType: 'IISWebsite'
+                        ActionIISWebsite: 'StartWebsite'
+                        StartStopWebsiteName: '${{variables.IISWebsiteName}}'
