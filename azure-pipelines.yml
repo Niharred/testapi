@@ -20,10 +20,7 @@ stages:
     - stage: DeployWebsite
       displayName: 'Deploy website'
       pool:
-        name: Default
-        demands:
-        - agent.name -equals agentselfhosted
-        vmImage: 'agentselfhosted-image:3.236.1'
+        vmImage: 'windows-latest'
      
       jobs:
       - deployment: DeployWebsite
