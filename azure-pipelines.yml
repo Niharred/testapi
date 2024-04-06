@@ -23,6 +23,7 @@ stages:
         name: Default
         demands:
         - agent.name -equals agentselfhosted
+        vmImage: 'agentselfhosted-image:3.236.1'
      
       jobs:
       - deployment: DeployWebsite
